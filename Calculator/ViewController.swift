@@ -25,20 +25,28 @@ class ViewController: UIViewController {
         ["0", ".", "="]
     ]
 
+    let cellId = "cellId"
+
     @IBOutlet weak var numberLabel: UILabel!
     @IBOutlet weak var calculatorCollectionView: UICollectionView!
     @IBOutlet weak var calculatorHeightConstraitnt: NSLayoutConstraint!
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        setupViews()
+    }
+
+    func setupViews() {
         calculatorCollectionView.delegate = self
         calculatorCollectionView.dataSource = self
-        calculatorCollectionView.register(CalculatorViewCell.self, forCellWithReuseIdentifier: "cellId")
+        calculatorCollectionView.register(CalculatorViewCell.self, forCellWithReuseIdentifier: cellId)
         calculatorHeightConstraitnt.constant = view.frame.width * 1.4
         calculatorCollectionView.backgroundColor = .clear
         //上からの始まりの位置を微調整
         calculatorCollectionView.contentInset = .init(top: 0, left: 14, bottom: 0, right: 14)
 
         numberLabel.text = "0"
+
         view.backgroundColor = .black
     }
 
@@ -51,6 +59,7 @@ class ViewController: UIViewController {
 
 }
 
+// MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -82,7 +91,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = calculatorCollectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! CalculatorViewCell
+        let cell = calculatorCollectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CalculatorViewCell
         cell.numberLabel.text = numbers[indexPath.section][indexPath.row]
         numbers[indexPath.section][indexPath.row].forEach { numberString in
             if "0"..."9" ~= numberString || numberString.description == "." {
@@ -99,81 +108,92 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         let number = numbers[indexPath.section][indexPath.row]
         switch calculateStatus {
         case .none:
-            switch number{
-            case "0"..."9":
+            handleFirstNumberSelected(number: number)
+        case .plus, .minus, .multiplication, .division:
+            handleSecondNumberSelected(number: number)
+        }
+    }
+
+    private func handleFirstNumberSelected(number: String) {
+        switch number{
+        case "0"..."9":
+            firstNumber += number
+            numberLabel.text = firstNumber
+
+            if firstNumber.hasPrefix("0") {
+                firstNumber = ""
+            }
+        case ".":
+            if !confirmIncludeDecimalPoint(numberString: firstNumber) {
                 firstNumber += number
                 numberLabel.text = firstNumber
-
-                if firstNumber.hasPrefix("0") {
-                    firstNumber = ""
-                }
-            case ".":
-                if !confirmIncludeDecimalPoint(numberString: firstNumber) {
-                    firstNumber += number
-                    numberLabel.text = firstNumber
-                }
-            case "+":
-                calculateStatus = .plus
-            case "-":
-                calculateStatus = .minus
-            case "×":
-                calculateStatus = .multiplication
-            case "÷":
-                calculateStatus = .division
-            case "C":
-                clear()
-            default:
-                break
             }
-        case .plus, .minus, .multiplication, .division:
-            switch number{
-            case "0"..."9":
+        case "+":
+            calculateStatus = .plus
+        case "-":
+            calculateStatus = .minus
+        case "×":
+            calculateStatus = .multiplication
+        case "÷":
+            calculateStatus = .division
+        case "C":
+            clear()
+        default:
+            break
+        }
+    }
+
+    private func handleSecondNumberSelected(number: String) {
+        switch number{
+        case "0"..."9":
+            secondNumber += number
+            numberLabel.text = secondNumber
+
+            if secondNumber.hasPrefix("0") {
+                secondNumber = ""
+            }
+        case ".":
+            if !confirmIncludeDecimalPoint(numberString: secondNumber) {
                 secondNumber += number
                 numberLabel.text = secondNumber
-
-                if secondNumber.hasPrefix("0") {
-                    secondNumber = ""
-                }
-            case ".":
-                if !confirmIncludeDecimalPoint(numberString: secondNumber) {
-                    secondNumber += number
-                    numberLabel.text = secondNumber
-                }
-            case "=":
-
-                let firstNum = Double(firstNumber) ?? 0
-                let secondNum = Double(secondNumber) ?? 0
-
-                var resultString: String?
-                switch calculateStatus {
-                case .plus:
-                    resultString = String(firstNum + secondNum)
-                case .minus:
-                    resultString = String(firstNum - secondNum)
-                case .multiplication:
-                    resultString = String(firstNum * secondNum)
-                case .division:
-                    resultString = String(firstNum / secondNum)
-                default:
-                    break
-                }
-
-                if let result = resultString, result.hasSuffix(".0") {
-                    resultString = result.replacingOccurrences(of: ".0", with: "")
-                }
-
-                numberLabel.text = resultString
-                firstNumber = ""
-                secondNumber = ""
-
-                firstNumber += resultString ?? ""
-                calculateStatus = .none
-            case "C":
-                clear()
-            default:
-                break
             }
+        case "=":
+            calculateResultNumber()
+        case "C":
+            clear()
+        default:
+            break
         }
+    }
+
+    private func calculateResultNumber() {
+        let firstNum = Double(firstNumber) ?? 0
+        let secondNum = Double(secondNumber) ?? 0
+
+        var resultString: String?
+        switch calculateStatus {
+        case .plus:
+            resultString = String(firstNum + secondNum)
+        case .minus:
+            resultString = String(firstNum - secondNum)
+        case .multiplication:
+            resultString = String(firstNum * secondNum)
+        case .division:
+            resultString = String(firstNum / secondNum)
+        default:
+            break
+        }
+
+        if let result = resultString, result.hasSuffix(".0") {
+            resultString = result.replacingOccurrences(of: ".0", with: "")
+        }
+
+        numberLabel.text = resultString
+        firstNumber = ""
+        secondNumber = ""
+
+        firstNumber += resultString ?? ""
+        calculateStatus = .none
     }
 
     private func confirmIncludeDecimalPoint(numberString: String) -> Bool {
@@ -182,42 +202,6 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         } else {
             return false
         }
-    }
-}
-
-class CalculatorViewCell: UICollectionViewCell {
-
-    override var isHighlighted: Bool {
-        didSet {
-            if isHighlighted {
-                self.numberLabel.alpha = 0.3
-            } else {
-                self.numberLabel.alpha = 1
-            }
-        }
-    }
-
-    let numberLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.textAlignment = .center
-        label.text = "1"
-        label.font = .boldSystemFont(ofSize: 32)
-        label.clipsToBounds = true
-        label.backgroundColor = .orange
-        return label
-    }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        addSubview(numberLabel)
-
-        numberLabel.frame.size = self.frame.size //セルの大きさと同じサイズに
-        numberLabel.layer.cornerRadius = self.frame.height / 2
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

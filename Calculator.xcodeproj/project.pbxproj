@@ -13,6 +13,7 @@
 		EBE67B012A3C0B6C00437B76 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBE67AFF2A3C0B6C00437B76 /* Main.storyboard */; };
 		EBE67B032A3C0B7100437B76 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBE67B022A3C0B7100437B76 /* Assets.xcassets */; };
 		EBE67B062A3C0B7100437B76 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBE67B042A3C0B7100437B76 /* LaunchScreen.storyboard */; };
+		EBE67B0E2A3C236D00437B76 /* CalculatorViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE67B0D2A3C236D00437B76 /* CalculatorViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		EBE67B022A3C0B7100437B76 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EBE67B052A3C0B7100437B76 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EBE67B072A3C0B7100437B76 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EBE67B0D2A3C236D00437B76 /* CalculatorViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				EBE67AF92A3C0B6C00437B76 /* AppDelegate.swift */,
 				EBE67AFB2A3C0B6C00437B76 /* SceneDelegate.swift */,
 				EBE67AFD2A3C0B6C00437B76 /* ViewController.swift */,
+				EBE67B0D2A3C236D00437B76 /* CalculatorViewCell.swift */,
 				EBE67AFF2A3C0B6C00437B76 /* Main.storyboard */,
 				EBE67B022A3C0B7100437B76 /* Assets.xcassets */,
 				EBE67B042A3C0B7100437B76 /* LaunchScreen.storyboard */,
@@ -138,6 +141,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EBE67B0E2A3C236D00437B76 /* CalculatorViewCell.swift in Sources */,
 				EBE67AFE2A3C0B6C00437B76 /* ViewController.swift in Sources */,
 				EBE67AFA2A3C0B6C00437B76 /* AppDelegate.swift in Sources */,
 				EBE67AFC2A3C0B6C00437B76 /* SceneDelegate.swift in Sources */,
