@@ -24,17 +24,30 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
 
     //セルの大きさを指定
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (collectionView.frame.width - 3 * 10) / 4
-        return .init(width: width, height: width)
+        var width: CGFloat = 0
+        width = ((collectionView.frame.width - 10) - 14 * 5) / 4
+        let height: CGFloat = width
+        if indexPath.section == 4 && indexPath.row == 0 {
+            width = width * 2 + 14 + 9
+        }
+        return .init(width: width, height: height)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
+        return 14
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = calculatorCollectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! CalculatorViewCell
         cell.numberLabel.text = numbers[indexPath.section][indexPath.row]
+        numbers[indexPath.section][indexPath.row].forEach { numberString in
+            if "0"..."9" ~= numberString || numberString.description == "." {
+                cell.numberLabel.backgroundColor = .darkGray
+            } else if numberString == "C" || numberString == "%" || numberString == "$" {
+                cell.numberLabel.backgroundColor = UIColor.init(white: 1, alpha: 0.7)
+                cell.numberLabel.textColor = .black
+            }
+        }
         return cell
     }
 
@@ -56,6 +69,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         calculatorCollectionView.register(CalculatorViewCell.self, forCellWithReuseIdentifier: "cellId")
         calculatorHeightConstraitnt.constant = view.frame.width * 1.4
         calculatorCollectionView.backgroundColor = .clear
+        //上からの始まりの位置を微調整
+        calculatorCollectionView.contentInset = .init(top: 0, left: 14, bottom: 0, right: 14)
 
         view.backgroundColor = .black
     }
