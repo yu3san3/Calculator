@@ -51,6 +51,51 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         return cell
     }
 
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let number = numbers[indexPath.section][indexPath.row]
+
+        if calculateStatus == .none {
+            switch number{
+            case "0"..."9":
+                numberLabel.text = number
+            case "+":
+                firstNumber = numberLabel.text ?? ""
+                calculateStatus = .plus
+            case "C":
+                clear()
+            default:
+                break
+            }
+        } else if calculateStatus == .plus {
+            switch number{
+            case "0"..."9":
+                numberLabel.text = number
+            case "=":
+                secondNumber = numberLabel.text ?? ""
+                let firstNum = Double(firstNumber) ?? 0
+                let secondNum = Double(secondNumber) ?? 0
+                numberLabel.text = String(firstNum + secondNum)
+            case "C":
+                clear()
+            default:
+                break
+            }
+        }
+    }
+
+    func clear() {
+        numberLabel.text = "0"
+        calculateStatus = .none
+    }
+
+    enum CalculateStatus {
+        case none, plus
+    }
+
+    var firstNumber = ""
+    var secondNumber = ""
+    var calculateStatus: CalculateStatus = .none
+
     let numbers = [
         ["C", "%", "$", "÷"],
         ["7", "8", "9", "×"],
